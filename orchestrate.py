@@ -11,6 +11,7 @@ import xgboost as xgb
 from prefect import flow, task
 from prefect.artifacts import create_markdown_artifact
 from datetime import date
+from prefect_email import EmailServerCredentials, email_send_message
 
 
 @task(retries=3, retry_delay_seconds=2)
@@ -126,13 +127,22 @@ def train_best_model(
             key="duration-model-report", markdown=markdown__rmse_report
         )
         
+        email_credentials_block = EmailServerCredentials.load("email-block")
+        email_address="mariaisabelja1998@hotmail.com"
+        email_send_message.with_options(name=f"email {email_address}").submit(
+            email_server_credentials=email_credentials_block,
+            subject="Example Flow Notification using Gmail",
+            msg="This proves email_send_message works!",
+            email_to=email_address,
+        )
+
     return None
 
 
 @flow
 def main_flow(
-    train_path: str = "./data/green_tripdata_2023-01.parquet",
-    val_path: str = "./data/green_tripdata_2023-02.parquet",
+    train_path: str = "./data/green_tripdata_2023-02.parquet",
+    val_path: str = "./data/green_tripdata_2023-03.parquet",
 ) -> None:
     """The main training pipeline"""
 
