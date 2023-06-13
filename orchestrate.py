@@ -126,15 +126,6 @@ def train_best_model(
         create_markdown_artifact(
             key="duration-model-report", markdown=markdown__rmse_report
         )
-        
-        email_credentials_block = EmailServerCredentials.load("email-block")
-        email_address="mariaisabelja1998@hotmail.com"
-        email_send_message.with_options(name=f"email {email_address}").submit(
-            email_server_credentials=email_credentials_block,
-            subject="Example Flow Notification using Gmail",
-            msg="This proves email_send_message works!",
-            email_to=email_address,
-        )
 
     return None
 
@@ -159,6 +150,15 @@ def main_flow(
 
     # Train
     train_best_model(X_train, X_val, y_train, y_val, dv)
+    
+    email_credentials_block = EmailServerCredentials.load("email-block")
+    email_address="mariaisabelja1998@hotmail.com"
+    email_send_message.with_options(name=f"email {email_address}").submit(
+        email_server_credentials=email_credentials_block,
+        subject="Example Flow Notification using Gmail",
+        msg="This proves email_send_message works!",
+        email_to=email_address,
+    )
 
 
 if __name__ == "__main__":
